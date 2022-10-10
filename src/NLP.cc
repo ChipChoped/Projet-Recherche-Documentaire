@@ -12,8 +12,8 @@
 #include "../lib/porter/olestem/stemming/english_stem.h"
 #include <cstdlib>
 
-std::string NLP::deleteSpecialChar(std::string text) {
-    char specialChar[] = ".,();!?{}\"\"$%€1234567890";
+void NLP::deleteSpecialChar(std::string& text) {
+    char specialChar[] = "_-.,();!?{}\"\"\\`$%€1234567890";
     int it = 0;
 
     for(char c : text){
@@ -28,32 +28,17 @@ std::string NLP::deleteSpecialChar(std::string text) {
             }
         }
     }
-
-    return text;
 } 
 
 std::vector<std::string> NLP::tokenize(std::string text) {
-    char delim = ' ';
     std::vector<std::string> tokens;
-    std::string temp;
-    int space = 0;
 
-    for (char i : text) {
-        if(i == delim){
-            if(space==0)
-                tokens.push_back(temp);
-            temp = "";
-            space++;
-            
-        }
-        else {
-            space = 0;
-            if (i != ' ')
-                temp += i;
-        }       
+    std::istringstream iss(text);
+    std::string word;
+    while (iss >> word) {
+        tokens.push_back(word);
     }
 
-    tokens.push_back(temp);
     return tokens;
 }
 
@@ -74,28 +59,30 @@ std::vector<std::string> NLP::getStopword(){
     return stopwords;
 }
 
-std::vector<std::string> NLP::deleteStopwords(std::vector<std::string> tokens, std::vector<std::string> stopwords){
+void NLP::deleteStopwords(std::vector<std::string>& tokens){
+    std::vector<std::string> stopwords = getStopword();
+
     for(auto it = std::begin(tokens); it != std::end(tokens); ++it) {
-        for(auto it2 = std::begin(stopwords); it2 != std::end(stopwords); ++it2) {
-            if(*it == *it2){
+        for(const auto& sw : stopwords) {
+            if(*it == sw){
                 tokens.erase(it);
                 it--;
             }
         }
     }
-    return tokens;
 }
 
-std::vector<std::string> NLP::stem(std::vector<std::string> tokens){
+void NLP::stem(std::vector<std::string>& tokens){
     std::wstring word;
     stemming::english_stem<> StemEnglish;
     std::vector<std::string> newList;
-    for (auto it = tokens.cbegin(); it != tokens.cend(); it++) {
-        std::string token=*it;
-        std::string ANSIWord(token);
-        wchar_t* UnicodeTextBuffer = new wchar_t[(*it).length()+1];
-        std::wmemset(UnicodeTextBuffer, 0, (*it).length()+1);
-        std::mbstowcs(UnicodeTextBuffer, (*it).c_str(), (*it).length());
+
+    for (const auto & it : tokens) {
+        std::string token = it;
+        auto* UnicodeTextBuffer = new wchar_t[it.length()+1];
+
+        std::wmemset(UnicodeTextBuffer, 0, it.length()+1);
+        std::mbstowcs(UnicodeTextBuffer, it.c_str(), it.length());
         word = UnicodeTextBuffer;
         StemEnglish(word);
         
@@ -103,7 +90,7 @@ std::vector<std::string> NLP::stem(std::vector<std::string> tokens){
         std::transform(word.begin(), word.end(), str.begin(), [] (wchar_t c) {
             return (char)c;
         });
+
         newList.push_back(str);
     }
-    return newList;
 }
