@@ -9,7 +9,7 @@ void BTrees::addTrees(Documents& documents, const int& order) {
 
         int i = 0;
         for (const auto& word : doc.getContent()) {
-            if(i == 26)
+            if(i == 25)
                 break;
             tree.insert(Word(word));
             //tree.traverse();
@@ -19,7 +19,7 @@ void BTrees::addTrees(Documents& documents, const int& order) {
 
         i = 0;
         for (const auto& word : doc.getContent()) {
-            if(i >= 26) {
+            if(i >= 25) {
                 tree.insert(Word(word));
                 //std::cout << word;
             }
