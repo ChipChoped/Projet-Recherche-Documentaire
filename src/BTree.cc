@@ -1,8 +1,8 @@
 #include "BTree.hh"
 
 BTree::BTree(int minDegree):
-        _minDegree(minDegree),
-        _root(BTreeNode(minDegree, true)) {}
+        _root(BTreeNode(minDegree, true)),
+        _minDegree(minDegree) {}
 
 void BTree::traverse() {
     if (_root._degree)
