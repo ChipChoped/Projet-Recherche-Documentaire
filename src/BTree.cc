@@ -25,7 +25,7 @@ void BTree::insert(const Word &word) {
     }
     else { // If tree is not empty
         // If root is full, then tree grows in height
-        if (_root._degree == 2*_minDegree-1 && _root._children.empty())
+        if (_root._degree == 2*_minDegree-1)
         {
             // Allocate memory for new root
             BTreeNode node(_minDegree, false);
